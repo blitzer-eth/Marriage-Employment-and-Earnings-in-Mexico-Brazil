@@ -1,0 +1,310 @@
+---
+title: "Econ 448 Final Paper – Mexico & Brazil Marriage Project"
+author: "Alex Lin"
+date: "`r format(Sys.time(), '%m/%d/%Y')`"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{css, echo=FALSE}
+body {
+  font-size: 12pt;
+  line-height: 2;
+}
+```
+
+## Introduction
+
+Marriage alters women's incentives to work in many family models by altering specialization within the home and each partner's negotiating position.  A couple may specialize, with one partner concentrating more on market work and the other on non-market production, if childcare and household production can be completed at home. However, according to bargaining models, each spouse's "threat point" or outside option—which is influenced by institutions like divorce law and labor market opportunities—determines the outcome of a marriage (McElroy and Horney; Chiappori; Lundberg and Pollak). This essay poses the following questions: How is marital status related to women's employment and income in Brazil and Mexico, and do these relationships vary between nations and over time (roughly 1990/1991 vs. 2000)?
+
+Since "marriage" is not a single institution with the same implications everywhere, cross-country comparisons are helpful in this situation.  The degree to which marriage is associated with employment can be influenced by norms regarding women's work, childcare expectations, and the structure of the labor market. Although Brazil and Mexico are both sizable middle-income nations with largely similar development paths in the late 20th century, there are some social and economic differences between them that may have an impact on women's outside options and household specialization. Comparing them makes it easier to distinguish between patterns that appear "universal" and those that appear extremely context-specific.
+
+I use IPUMS International's harmonized census microdata for women in Brazil and Mexico between the ages of 18 and 65. I concentrate on two primary labor outcomes: a measure of employment and the log earnings of working women. My main conclusion is that, even after adjusting for age, education, and fertility, married women are significantly less likely than never-married women to be employed in both countries, and married employed women earn less than never-married employed women. While the "divorce employment penalty" is generally similar across countries in this pooled specification, the cross-country interaction results indicate that the "marriage employment penalty" is smaller in Mexico than in Brazil.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+library(stargazer)
+library(scales)
+library(modelsummary)
+library(kableExtra)
+```
+
+```{r}
+## 1. Load Data
+ipums_file <- "C:/Users/alexl/OneDrive/Desktop/桌面/UW/CourseWork/Senior Year/Autumn 2025/ECON 448/Final Project/ipumsi_00004.csv.gz"
+df_raw <- read.csv(gzfile(ipums_file))
+```
+
+## Data
+
+IPUMS International, which offers harmonized microdata from national censuses in a uniform format across nations and years, is the source of the data. I limit the sample to women between the ages of 18 and 65 and use Brazil (1991 and 2000) and Mexico (1990 and 2000).  I use EMPSTAT to define an employment indicator and create binary indicators for being married, currently married, and divorced.  In order to lessen the impact of skewness, I clean extremely large income values using the IPUMS top-code and missing value conventions and examine log(earnings + 1).  The four country-year samples are pooled and all analysis is done at the individual level.
+
+Income measures from the census are frequently top-coded, skewed, and contain unique missing-value codes.  As a result, I use IPUMS conventions to clean up implausibly high income values and log(earnings + 1) to analyze log earnings.  The log transformation makes coefficient interpretations roughly proportionate and less sensitive to extreme values.  Crucially, the country indicator in pooled models partially captures mechanical differences in currency scale because Brazil and Mexico report earnings in local currency units. As a result, cross-country differences in earnings levels are not interpreted as welfare comparisons.
+
+Additionally, the census offers incredibly large samples, which is useful but modifies the interpretation of the results.  Significance stars are not the primary focus because even minute differences can be statistically significant with millions of observations.  Rather, I focus on the magnitude of estimated associations and whether or not they match theoretical expectations.  Furthermore, the analysis compares groups at a single point in time rather than following the same women over time because these are repeated cross-sections rather than panel data.
+
+```{r}
+## 2. Sample Restrictions + Variable Construction
+df <- df_raw %>%
+  filter(
+    COUNTRY %in% c(76, 484),
+    AGE >= 18, AGE <= 65,
+    SEX == 2
+  ) %>%
+  mutate(
+    country = ifelse(COUNTRY == 484, "Mexico", "Brazil"),
+    year = YEAR,
+    ever_married = as.integer(MARST >= 2),
+    married = as.integer(MARST == 2),
+    divorced = as.integer(MARST == 4),
+    employed = as.integer(EMPSTAT == 1),
+    INCEARN_clean = ifelse(INCEARN >= 99999998, NA, INCEARN),
+    ln_earnings = log(INCEARN_clean + 1)
+  )
+```
+
+\newpage
+
+## Theory and Predictions
+
+Two related frameworks from family economics serve as the inspiration for this project.  First, models of household production and specialization predict that marriage can decrease the labor supply of women if partners divide their time effectively between market and non-market labor, particularly when women take on more childcare and household duties.  Second, intra-household allocations are predicted by bargaining models to be dependent on each spouse's outside options.  According to McElroy and Horney, Lundberg and Pollak, and Chiappori, women who have more options outside the home may be able to influence labor supply decisions and receive a greater portion of household resources. This is because labor market attachment itself can increase bargaining power.
+
+A different channel is highlighted by bargaining models: each spouse's backup position determines who gets resources and makes decisions.  By offering independent income, maintaining labor market attachment, and altering the legitimacy of exit threats, employment can enhance a woman's outside option.  Therefore, depending on whether employment is primarily a tool for bargaining (raising labor supply) or primarily something a spouse can discourage when the other spouse has greater bargaining power (lowering labor supply), bargaining models can produce either a higher or lower labor supply within marriage.  The empirical sign and size of marriage gaps in employment and income are instructive precisely because of this ambiguity.
+
+Testable predictions are implied by these frameworks.  Keeping age and education constant, married women should be less likely to work than single women if specialization predominates.  Because divorce can increase the need for independent income and because women may invest in labor market attachment to improve outside options, divorced women may work more than married women if bargaining and outside options predominate.  However, since marriage and divorce are decisions linked to unobserved characteristics like preferences, health, and local labor market conditions, observed differences by marital status are not always causal.  This is why the findings in this paper should be interpreted as associations rather than causal effects.
+
+Children can increase marital specialization and alter outside options, which is a significant implication of both household production and bargaining approaches.  Having children raises the value of non-market time and can cause the effective distribution of time away from market work, particularly if women are disproportionately responsible for childcare.  Additionally, children can influence bargaining by increasing the expenses associated with divorce or by altering the balance of power in household decisions.  Because of this, even though it does not completely eliminate selection into marriage, controlling for children born helps distinguish the relationship between marital status and labor outcomes from the relationship between fertility and labor outcomes.
+
+```{r}
+## 3. Summary Statistics Table
+tbl_sum <- df %>%
+  group_by(country, year) %>%
+  summarise(
+    N = n(),
+    mean_AGE = mean(AGE, na.rm = TRUE),
+    sd_AGE = sd(AGE, na.rm = TRUE),
+    min_AGE = min(AGE, na.rm = TRUE),
+    max_AGE = max(AGE, na.rm = TRUE),
+    mean_YRSCHOOL = mean(YRSCHOOL, na.rm = TRUE),
+    sd_YRSCHOOL = sd(YRSCHOOL, na.rm = TRUE),
+    mean_CHBORN = mean(CHBORN, na.rm = TRUE),
+    sd_CHBORN = sd(CHBORN, na.rm = TRUE),
+    mean_employed = mean(employed, na.rm = TRUE),
+    mean_ln_earn = mean(ln_earnings, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+kable(
+  tbl_sum,
+  digits = 3,
+  caption = "Table 1. Summary statistics for women ages 18–65 by country and year",
+  format = "html"
+) %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Descriptive Results
+
+## Summary Statistics
+
+Summary statistics by nation and year are shown in Table 1.  There are a few notable general trends.  First, both countries' employment rates rise over time: Mexico's increased from roughly 0.234 in 1990 to 0.333 in 2000, and Brazil's increased from roughly 0.375 in 1991 to 0.446 in 2000.  Second, in line with the expansion of education, both countries' average years of schooling increased in later years.  Lastly, since the earnings variable is expressed in local currency units, it varies mechanically between nations; unless income is converted into a comparable unit (such as PPP-adjusted values), cross-country comparisons of log earnings should be interpreted cautiously.  Because of this, it is best to interpret the earnings analysis as reflecting marital status differences within a country, with level differences being absorbed by country and year controls.
+
+The country-year averages also point to significant shifts in women's socioeconomic status during the 1990s.  By 2000, mean schooling rises significantly in both Brazil and Mexico, which is consistent with increased access to education.  Both nations' employment rates have increased over time, which may be due to structural shifts in labor demand, urbanization, and evolving attitudes toward women's employment.  Because the marital status gradients estimated later take place in an environment where women's human capital and labor market participation are changing rather than in a static setting, these trends are important for interpretation.
+
+```{r}
+## 4. Figure: Proportion Ever Married by Age
+df_ever <- df %>%
+  group_by(country, year, AGE) %>%
+  summarise(
+    prop_ever = mean(ever_married, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+ggplot(df_ever, aes(x = AGE, y = prop_ever, color = factor(year), group = year)) +
+  geom_line() +
+  facet_wrap(~ country) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    x = "Age",
+    y = "Proportion ever married",
+    color = "Year",
+    title = "Proportion of Women Ever Married by Age, Country, and Year"
+  ) +
+  theme_bw()
+```
+
+## Ever-married profiles
+
+The percentage of women who have ever been married is plotted by age, country, and year in Figure 1.  Ever-marriage rises sharply in both nations from the late teens to the 20s before leveling off at older ages.  Although the precise levels vary slightly between years and countries, the overall shape is consistent across years within each nation, indicating that marriage timing is generally stable during this time.  This descriptive pattern reinforces the significance of flexibly controlling for age in the regression models by demonstrating the strong age-relatedity of marital status, which helps contextualize subsequent regressions.
+
+## Empirical Strategy
+
+I estimate two main models. For employment, I use a linear probability model:
+
+$$
+\text{Employed}_i
+= \alpha
++ \beta_1 \text{Married}_i
++ \beta_2 \text{Divorced}_i
++ f(\text{Age}_i)
++ \gamma \text{Schooling}_i
++ \delta \text{Children}_i
++ \text{Country FE}
++ \text{Year FE}
++ \varepsilon_i .
+$$
+
+where $f(\text{Age}_i)$ is a quadratic in age. I then extend this to allow the relationship between marital status and employment to differ in Mexico relative to Brazil by interacting marital status indicators with the Mexico dummy.
+
+For earnings, I restrict the sample to employed women with non-missing earnings and estimate:
+
+$$
+\ln(\text{Earnings}_i + 1)
+= \alpha
++ \beta_1 \text{Married}_i
++ \beta_2 \text{Divorced}_i
++ f(\text{Age}_i)
++ \gamma \text{Schooling}_i
++ \delta \text{Children}_i
++ \text{Country FE}
++ \text{Year FE}
++ \varepsilon_i .
+$$
+
+After adjusting for important observable correlates, these models are intended to determine whether outcomes vary systematically by marital status.  The estimates should be interpreted as associations rather than causal effects because the data are cross-sectional and marital status is endogenous.
+
+## Regression Results
+
+```{r}
+## 5. Employment Regressions
+m_emp1 <- lm(
+  employed ~ married + divorced + AGE + I(AGE^2) + YRSCHOOL + CHBORN + country + factor(year),
+  data = df
+)
+
+m_emp2 <- lm(
+  employed ~ married*country + divorced*country + AGE + I(AGE^2) + YRSCHOOL + CHBORN + factor(year),
+  data = df
+)
+
+models_emp <- list(
+  "Pooled"            = m_emp1,
+  "With interactions" = m_emp2
+)
+
+coef_map_emp <- c(
+  "married" = "Married",
+  "divorced" = "Divorced",
+  "married:countryMexico" = "Married × Mexico",
+  "divorced:countryMexico" = "Divorced × Mexico",
+  "AGE" = "Age",
+  "I(AGE^2)" = "Age squared",
+  "YRSCHOOL" = "Years of schooling",
+  "CHBORN" = "Children ever born",
+  "countryMexico" = "Mexico (country dummy)"
+)
+
+modelsummary(
+  models_emp,
+  title = "Table 2. Association Between Marital Status and Employment",
+  output = "kableExtra",
+  coef_map = coef_map_emp,
+  statistic = "({std.error})",
+  stars = TRUE,
+  gof_omit = "IC|Log|Adj|F|RMSE"
+) %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Employment results
+
+A significant and statistically accurate correlation between employment and marital status can be seen in Table 2.  According to the pooled model, married women have a 26.1 percentage point lower chance of being employed than single women, and divorced women have a 15.2 percentage point lower chance.  The married interaction for Mexico is +0.043 in the interaction specification, whereas the baseline married coefficient for Brazil is approximately -0.231. This suggests that although the employment gap between married and never-married women is still negative in Mexico, it is 4.3 percentage points smaller than in Brazil.  In this pooled model, the divorced interaction for Mexico is nearly zero in magnitude, indicating that the divorce-employment relationship is comparable across nations.
+
+Comparing implied marriage gaps between nations is an easy way to understand the interaction specification.  The married coefficient shows a significant negative correlation with employment in Brazil (the baseline group).  In Mexico, this difference is somewhat mitigated by the interaction term, suggesting that the employment gap between married and single people is still negative.  This may be due to variations in the opportunities for employment, variations in specialization within households, or variations in the ways that marriage interacts with women's options outside the home in the two contexts.
+
+The covariates shed more light on the mechanisms.  According to lifecycle participation patterns, the concave age profile indicates that participation increases with age early in adulthood before declining later.  The interpretation of household production is reinforced by the negative correlation between the number of children born and employment, which is consistent with childcare responsibilities decreasing market work.  In this pooled employment specification, the schooling coefficient is negative. This could be due to compositional differences in who is counted as employed, variations in how EMPSTAT captures work in informal settings, or heterogeneity across country-year labor markets.  The idea that coefficients are descriptive and ought to be understood in context rather than as structural parameters is further supported by this.
+
+These results are in line with household specialization models that link marriage to a decrease in women's market labor.  Additionally, they align with bargaining strategies if women's outside options vary systematically by marital status or if marriage lessens their market attachment (McElroy and Horney; Lundberg and Pollak; Chiappori).  However, selection into marriage is probably significant: unobserved preferences and local labor market conditions may skew these estimates, and women with lower labor market attachment may be more likely to get married.
+
+
+```{r}
+## 6. Earnings Regression (Employed Women Only)
+df_working <- df %>%
+  filter(employed == 1, !is.na(ln_earnings))
+
+m_earn <- lm(
+  ln_earnings ~ married + divorced +
+    AGE + I(AGE^2) + YRSCHOOL + CHBORN +
+    country + factor(year),
+  data = df_working
+)
+
+coef_map_earn <- c(
+  "married" = "Married",
+  "divorced" = "Divorced",
+  "AGE" = "Age",
+  "I(AGE^2)" = "Age squared",
+  "YRSCHOOL" = "Years of schooling",
+  "CHBORN" = "Children ever born",
+  "countryMexico" = "Mexico (country dummy)"
+)
+
+modelsummary(
+  list("Employed women only" = m_earn),
+  title = "Table 3. Association Between Marital Status and Log Earnings (Employed Women Only)",
+  output = "kableExtra",
+  coef_map = coef_map_earn,
+  statistic = "({std.error})",
+  stars = TRUE,
+  fmt = 3,
+  gof_omit = "IC|Log|Adj|F|RMSE"
+) %>%
+  kable_styling(full_width = FALSE)
+```
+
+
+\newpage
+
+## Earnings results
+
+Results for log earnings among working women are shown in Table 3.  The married coefficient is approximately -0.592, which translates to about 45% lower earnings in a log interpretation ($e^{-0.592} - 1 \approx -0.447$). Married employed women earn significantly less than never-married employed women.  Although the difference is much smaller (about -0.052, or roughly 5%), divorced employed women still earn less than never-married employed women.  The age profile is concave, in line with a typical earnings lifecycle pattern, and education is positively correlated with earnings.
+
+Because the regression is only estimated among employed women, the earnings results should be interpreted carefully.  The set of employed married women may differ systematically from the set of employed never-married women if marriage influences who works. This is one way that conditioning on employment can introduce selection.  For instance, married women who continue to work might be positively selected based on job stability, or they might be concentrated in flexible but lower-paying jobs that are compatible with household responsibilities.  The earnings coefficients capture a combination of wage disparities and employment selection because either direction is possible.
+
+In the context of family economics, the married earnings penalty among employed women may be caused by a number of factors, such as employer discrimination, differential selection into employment (married women may be more likely to work intermittently or in lower-paying jobs compatible with household production), or a "motherhood penalty" channel linked to marriage and fertility.  Higher earnings for married women are not always predicted by bargaining models; rather, they predict that allocations react to institutions and outside options, and labor market behavior may contribute to the formation of outside options (Lundberg and Pollak; Chiappori). The main lesson here is the within-sample marital status gradient; cross-country comparisons of earnings levels are meaningless without conversion because earnings are measured in local currency and the pooled model includes a country dummy.
+
+## Discussion and Limitations
+
+The findings of this study indicate a strong correlation between women's labor market outcomes in Brazil and Mexico and their marital status. While the regression estimates indicate that the married category is linked to lower employment and lower earnings among workers, the descriptive patterns demonstrate that marriage is almost universal by midlife and strongly correlated with age.
+
+While maintaining the same data source, two extensions would enhance the analysis.  First, instead of imposing pooled structure plus a few interactions, estimating the employment and earnings models separately by country would allow all relationships, including the education gradient and fertility associations, to differ freely across Brazil and Mexico.  Second, limiting the sample to smaller age groups (e.g., 25–45) would lessen lifecycle confounding and concentrate on prime working ages, when decisions about marriage and employment are most closely related.  Although endogeneity would not be resolved by these checks, they would make it clear whether the primary gradients of marital status are stable across plausible alternative specifications.
+
+There are significant restrictions, though.  First, because marriage and divorce are endogenously selected and correlated with unobserved characteristics, the estimates are not causal.  Second, different currency units and possibly different top-coding rules make it difficult to compare earnings across nations; a more straightforward cross-national earnings comparison would either examine within-country standardized earnings measures or convert incomes into a common metric like PPP-adjusted dollars.  Third, there is a lack of information in the census data regarding job characteristics (such as sector, hours, or informality) that could moderate the relationship between earnings and marriage.  Finally, substantive significance should be highlighted alongside p-values because very small differences can be statistically significant due to the extraordinarily large sample sizes.
+
+Despite these drawbacks, the findings support well-known theories in the literature on family economics: marriage is linked to shifts in labor market attachment and time allocation, and these relationships can vary depending on social norms, labor markets, and institutions controlling the formation and dissolution of families (McElroy and Horney; Chiappori; Lundberg and Pollak).  Institutions can influence labor supply responses, according to research on divorce law modifications, but determining these effects necessitates careful causal designs and policy variation (Hoehn-Velasco and Penglase; Stevenson and Wolfers).
+
+## Conclusion
+
+I find a strong correlation between women's employment and earnings and their marital status using IPUMS International census microdata for Brazil and Mexico around 1990/1991 and 2000.  Compared to women who have never married, married women are significantly less likely to work, and among those who do, marriage is linked to significantly lower incomes.  While the divorced-employment relationship is comparable between the two countries in this specification, a pooled interaction model indicates that the marriage-employment gap is slightly smaller in Mexico than in Brazil.  All things considered, the trends align with family economics theories that emphasize bargaining and specialization while also stressing the significance of institutional context and selection.  Future research could advance causal identification through policy variation in family law and enhance cross-national earnings comparability.
+
+\newpage
+
+<h2 style="text-align:center;">Works Cited</h2>
+
+Chiappori, Pierre-André. “Collective Labor Supply and Welfare.” Journal of Political Economy, vol. 100, no. 3, 1992, pp. 437–467. University of Chicago Press, https://doi.org/10.1086/261825
+
+Hoehn-Velasco, Lauren, and Jacob Penglase. “Does Unilateral Divorce Impact Women’s Labor Supply? Evidence from Mexico.” Journal of Economic Behavior & Organization, vol. 187, 2021, pp. 315–347. Elsevier, https://doi.org/10.1016/j.jebo.2021.04.028
+
+IPUMS International. IPUMS International: Version 7.7 [dataset]. Minneapolis, MN: IPUMS, 2025. https://doi.org/10.18128/D020.V7.7
+
+Lundberg, Shelly, and Robert A. Pollak. “Separate Spheres Bargaining and the Marriage Market.” American Economic Review, vol. 83, no. 4, 1993, pp. 988–1010. 
+
+McElroy, Marjorie B., and Mary Jean Horney. “Nash-Bargained Household Decisions: Toward a Generalization of the Theory of Demand.” International Economic Review, vol. 22, no. 2, 1981, pp. 333–349. 
+
+Stevenson, Betsey, and Justin Wolfers. “Bargaining in the Shadow of the Law: Divorce Laws and Family Distress.” Quarterly Journal of Economics, vol. 121, no. 1, 2006, pp. 267–288.
+

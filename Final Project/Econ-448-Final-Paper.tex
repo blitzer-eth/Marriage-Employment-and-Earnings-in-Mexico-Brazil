@@ -1,0 +1,810 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Econ 448 Final Paper -- Mexico \& Brazil Marriage Project},
+  pdfauthor={Alex Lin},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Econ 448 Final Paper -- Mexico \& Brazil Marriage Project}
+\author{Alex Lin}
+\date{12/12/2025}
+
+\begin{document}
+\maketitle
+
+\subsection{Introduction}\label{introduction}
+
+In many models of the family, marriage changes women's incentives to
+work by changing specialization inside the household and by changing
+each partner's bargaining position. If household production and
+childcare can be produced at home, a couple may specialize, with one
+partner focusing more on market work while the other focuses more on
+non-market production. At the same time, bargaining models predict that
+outcomes inside marriage depend on each spouse's ``threat point'' or
+outside option, which is shaped by labor market opportunities and
+institutions such as divorce law (McElroy and Horney; Chiappori;
+Lundberg and Pollak). This paper asks: How is marital status associated
+with women's employment and earnings in Mexico and Brazil, and do these
+associations differ across countries and over time (around 1990/1991
+vs.~2000)?
+
+I use harmonized census microdata from IPUMS International for women
+ages 18--65 in Brazil and Mexico. I focus on two core labor outcomes: an
+indicator for being employed and log earnings among employed women. My
+main finding is that, in both countries, married women are substantially
+less likely to be employed than never-married women, and married
+employed women have lower earnings than never-married employed women,
+even after controlling for age, education, and fertility. The
+cross-country interaction results suggest that the ``marriage employment
+penalty'' is smaller in Mexico than in Brazil, while the ``divorce
+employment penalty'' is broadly similar across countries in this pooled
+specification.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## 載入套件：'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## 下列物件被遮斷自 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## 下列物件被遮斷自 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(readr)}
+\FunctionTok{library}\NormalTok{(knitr)}
+\FunctionTok{library}\NormalTok{(stargazer)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Please cite as:
+\end{verbatim}
+
+\begin{verbatim}
+##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+\end{verbatim}
+
+\begin{verbatim}
+##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(scales)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## 載入套件：'scales'
+\end{verbatim}
+
+\begin{verbatim}
+## 下列物件被遮斷自 'package:readr':
+## 
+##     col_factor
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# 1. Load Data}
+\NormalTok{ipums\_file }\OtherTok{\textless{}{-}} \StringTok{"C:/Users/alexl/OneDrive/Desktop/桌面/UW/CourseWork/Senior Year/Autumn 2025/ECON 448/Final Project/ipumsi\_00004.csv.gz"}
+\NormalTok{df\_raw }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\FunctionTok{gzfile}\NormalTok{(ipums\_file))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Data}\label{data}
+
+The data come from IPUMS International, which provides harmonized
+microdata from national censuses in a consistent format across countries
+and years. I use Brazil (1991 and 2000) and Mexico (1990 and 2000),
+restricting the sample to women ages 18--65. I construct binary
+indicators for being ever married, currently married, and divorced, and
+I define an employment indicator using EMPSTAT. For earnings, I clean
+extremely large income values using the IPUMS top-code and missing value
+conventions and analyze log(earnings + 1) to reduce the influence of
+skewness. All analysis is conducted at the person level, pooling the
+four country-year samples.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# 2. Sample Restrictions + Variable Construction}
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df\_raw }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    COUNTRY }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\DecValTok{76}\NormalTok{, }\DecValTok{484}\NormalTok{),}
+\NormalTok{    AGE }\SpecialCharTok{\textgreater{}=} \DecValTok{18}\NormalTok{, AGE }\SpecialCharTok{\textless{}=} \DecValTok{65}\NormalTok{,}
+\NormalTok{    SEX }\SpecialCharTok{==} \DecValTok{2}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{country =} \FunctionTok{ifelse}\NormalTok{(COUNTRY }\SpecialCharTok{==} \DecValTok{484}\NormalTok{, }\StringTok{"Mexico"}\NormalTok{, }\StringTok{"Brazil"}\NormalTok{),}
+    \AttributeTok{year =}\NormalTok{ YEAR,}
+    \AttributeTok{ever\_married =} \FunctionTok{as.integer}\NormalTok{(MARST }\SpecialCharTok{\textgreater{}=} \DecValTok{2}\NormalTok{),}
+    \AttributeTok{married =} \FunctionTok{as.integer}\NormalTok{(MARST }\SpecialCharTok{==} \DecValTok{2}\NormalTok{),}
+    \AttributeTok{divorced =} \FunctionTok{as.integer}\NormalTok{(MARST }\SpecialCharTok{==} \DecValTok{4}\NormalTok{),}
+    \AttributeTok{employed =} \FunctionTok{as.integer}\NormalTok{(EMPSTAT }\SpecialCharTok{==} \DecValTok{1}\NormalTok{),}
+    \AttributeTok{INCEARN\_clean =} \FunctionTok{ifelse}\NormalTok{(INCEARN }\SpecialCharTok{\textgreater{}=} \DecValTok{99999998}\NormalTok{, }\ConstantTok{NA}\NormalTok{, INCEARN),}
+    \AttributeTok{ln\_earnings =} \FunctionTok{log}\NormalTok{(INCEARN\_clean }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Theory and Predictions}\label{theory-and-predictions}
+
+This project is motivated by two related frameworks from the economics
+of the family. First, models of household specialization and household
+production predict that marriage can reduce women's labor supply if
+couples allocate time efficiently across market work and non-market
+production, especially when women bear a larger share of childcare and
+home responsibilities. Second, bargaining models predict that
+intra-household allocations depend on each spouse's outside options.
+When women have stronger outside options, they may obtain a larger share
+of household resources and may also change labor supply decisions
+because labor market attachment itself can strengthen bargaining power
+(McElroy and Horney; Lundberg and Pollak; Chiappori).
+
+These frameworks imply testable predictions. If specialization
+dominates, then married women should be less likely to work than
+never-married women, holding age and education constant. If bargaining
+and outside options dominate, divorced women may work more than married
+women because divorce can increase the need for independent income and
+because women may invest in labor market attachment to improve outside
+options. However, observed differences by marital status are not
+automatically causal because marriage and divorce are choices correlated
+with unobserved traits, including preferences, health, and local labor
+market conditions. This motivates treating the results in this paper as
+associations rather than causal effects.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# 3. Summary Statistics Table}
+\NormalTok{tbl\_sum }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(country, year) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{N =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{mean\_AGE =} \FunctionTok{mean}\NormalTok{(AGE, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{sd\_AGE =} \FunctionTok{sd}\NormalTok{(AGE, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{min\_AGE =} \FunctionTok{min}\NormalTok{(AGE, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{max\_AGE =} \FunctionTok{max}\NormalTok{(AGE, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{mean\_YRSCHOOL =} \FunctionTok{mean}\NormalTok{(YRSCHOOL, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{sd\_YRSCHOOL =} \FunctionTok{sd}\NormalTok{(YRSCHOOL, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{mean\_CHBORN =} \FunctionTok{mean}\NormalTok{(CHBORN, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{sd\_CHBORN =} \FunctionTok{sd}\NormalTok{(CHBORN, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{mean\_employed =} \FunctionTok{mean}\NormalTok{(employed, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{mean\_ln\_earn =} \FunctionTok{mean}\NormalTok{(ln\_earnings, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}
+
+\FunctionTok{kable}\NormalTok{(}
+\NormalTok{  tbl\_sum,}
+  \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+  \AttributeTok{caption =} \StringTok{"Summary statistics for women ages 18–65 by country and year"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0625}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0391}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0625}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0703}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0547}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0625}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0625}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.1094}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0938}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0938}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0781}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.1094}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.1016}}@{}}
+\caption{Summary statistics for women ages 18--65 by country and
+year}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+country
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+year
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+min\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+max\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_YRSCHOOL
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd\_YRSCHOOL
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_CHBORN
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd\_CHBORN
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_employed
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_ln\_earn
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+country
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+year
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+min\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+max\_AGE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_YRSCHOOL
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd\_YRSCHOOL
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_CHBORN
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd\_CHBORN
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_employed
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean\_ln\_earn
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Brazil & 1991 & 4659362 & 35.666 & 12.766 & 18 & 65 & 5.650 & 7.677 &
+7.768 & 21.240 & 0.375 & 10.246 \\
+Brazil & 2000 & 5962845 & 36.334 & 12.847 & 18 & 65 & 7.364 & 10.273 &
+2.478 & 2.663 & 0.446 & 5.081 \\
+Mexico & 1990 & 2120963 & 34.268 & 12.679 & 18 & 65 & 7.000 & 10.693 &
+8.433 & 21.761 & 0.234 & 2.853 \\
+Mexico & 2000 & 2780233 & 35.320 & 12.731 & 18 & 65 & 10.203 & 17.675 &
+4.176 & 10.580 & 0.333 & 2.101 \\
+\end{longtable}
+
+\subsection{Descriptive Results}\label{descriptive-results}
+
+\subsection{Summary Statistics}\label{summary-statistics}
+
+Table 1 reports summary statistics by country and year. Several broad
+patterns stand out. First, employment levels rise over time in both
+countries: Brazil increases from about 0.375 employed in 1991 to 0.446
+in 2000, and Mexico increases from about 0.234 in 1990 to 0.333 in 2000.
+Second, average years of schooling are higher in later years for both
+countries, consistent with educational expansion. Finally, the earnings
+variable is expressed in local currency units and therefore differs
+mechanically across countries; cross-country comparisons of log earnings
+should be interpreted cautiously unless income is converted into a
+comparable unit (for example, PPP-adjusted values). For this reason, the
+earnings analysis is best interpreted as reflecting within-country
+differences by marital status, with country and year controls absorbing
+level differences.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# 4. Figure: Proportion Ever Married by Age}
+\NormalTok{df\_ever }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(country, year, AGE) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{prop\_ever =} \FunctionTok{mean}\NormalTok{(ever\_married, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}
+
+\FunctionTok{ggplot}\NormalTok{(df\_ever, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ AGE, }\AttributeTok{y =}\NormalTok{ prop\_ever, }\AttributeTok{color =} \FunctionTok{factor}\NormalTok{(year), }\AttributeTok{group =}\NormalTok{ year)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ country) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{(}\AttributeTok{accuracy =} \DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{x =} \StringTok{"Age"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Proportion ever married"}\NormalTok{,}
+    \AttributeTok{color =} \StringTok{"Year"}\NormalTok{,}
+    \AttributeTok{title =} \StringTok{"Proportion of Women Ever Married by Age, Country, and Year"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Econ-448-Final-Paper_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\subsection{Ever-married profiles}\label{ever-married-profiles}
+
+Figure 1 plots the proportion of women who have ever been married by
+age, separately by country and year. In both countries, ever-marriage
+rises steeply from the late teens through the 20s and then flattens at
+older ages. The overall shape is similar across years within each
+country, suggesting that marriage timing is broadly stable in this
+period, though the exact levels differ slightly across year and country.
+This descriptive pattern helps contextualize later regressions by
+showing that marital status is strongly age-related, reinforcing the
+importance of controlling flexibly for age in the regression models.
+
+\subsection{Empirical Strategy}\label{empirical-strategy}
+
+I estimate two main models. For employment, I use a linear probability
+model:
+
+\[
+\text{Employed}_i
+= \alpha
++ \beta_1 \text{Married}_i
++ \beta_2 \text{Divorced}_i
++ f(\text{Age}_i)
++ \gamma \text{Schooling}_i
++ \delta \text{Children}_i
++ \text{Country FE}
++ \text{Year FE}
++ \varepsilon_i .
+\]
+
+where \(f(\text{Age}_i)\) is a quadratic in age. I then extend this to
+allow the relationship between marital status and employment to differ
+in Mexico relative to Brazil by interacting marital status indicators
+with the Mexico dummy.
+
+For earnings, I restrict the sample to employed women with non-missing
+earnings and estimate:
+
+\[
+\ln(\text{Earnings}_i + 1)
+= \alpha
++ \beta_1 \text{Married}_i
++ \beta_2 \text{Divorced}_i
++ f(\text{Age}_i)
++ \gamma \text{Schooling}_i
++ \delta \text{Children}_i
++ \text{Country FE}
++ \text{Year FE}
++ \varepsilon_i .
+\]
+
+These models are designed to test whether outcomes differ systematically
+by marital status after controlling for key observable correlates.
+Because the data are cross-sectional and marital status is endogenous,
+the estimates should be interpreted as associations rather than causal
+effects.
+
+\subsection{Regression Results}\label{regression-results}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# 5. Employment Regressions}
+\NormalTok{m\_emp1 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(}
+\NormalTok{  employed }\SpecialCharTok{\textasciitilde{}}\NormalTok{ married }\SpecialCharTok{+}\NormalTok{ divorced }\SpecialCharTok{+}
+\NormalTok{    AGE }\SpecialCharTok{+} \FunctionTok{I}\NormalTok{(AGE}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ YRSCHOOL }\SpecialCharTok{+}\NormalTok{ CHBORN }\SpecialCharTok{+}
+\NormalTok{    country }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(year),}
+  \AttributeTok{data =}\NormalTok{ df}
+\NormalTok{)}
+
+\NormalTok{m\_emp2 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(}
+\NormalTok{  employed }\SpecialCharTok{\textasciitilde{}}\NormalTok{ married}\SpecialCharTok{*}\NormalTok{country }\SpecialCharTok{+}\NormalTok{ divorced}\SpecialCharTok{*}\NormalTok{country }\SpecialCharTok{+}
+\NormalTok{    AGE }\SpecialCharTok{+} \FunctionTok{I}\NormalTok{(AGE}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ YRSCHOOL }\SpecialCharTok{+}\NormalTok{ CHBORN }\SpecialCharTok{+}
+    \FunctionTok{factor}\NormalTok{(year),}
+  \AttributeTok{data =}\NormalTok{ df}
+\NormalTok{)}
+
+\FunctionTok{stargazer}\NormalTok{(}
+\NormalTok{  m\_emp1, m\_emp2,}
+  \AttributeTok{title =} \StringTok{"Association Between Marital Status and Employment"}\NormalTok{,}
+  \AttributeTok{dep.var.labels =} \StringTok{"Employed"}\NormalTok{,}
+  \AttributeTok{column.labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Pooled"}\NormalTok{, }\StringTok{"With interactions"}\NormalTok{),}
+  \AttributeTok{covariate.labels =} \FunctionTok{c}\NormalTok{(}
+    \StringTok{"Married"}\NormalTok{,}
+    \StringTok{"Divorced"}\NormalTok{,}
+    \StringTok{"Married × Mexico"}\NormalTok{,}
+    \StringTok{"Divorced × Mexico"}\NormalTok{,}
+    \StringTok{"Age"}\NormalTok{,}
+    \StringTok{"Age squared"}\NormalTok{,}
+    \StringTok{"Years of schooling"}\NormalTok{,}
+    \StringTok{"Children ever born"}\NormalTok{,}
+    \StringTok{"Mexico (country dummy)"}
+\NormalTok{  ),}
+  \AttributeTok{keep =} \FunctionTok{c}\NormalTok{(}
+    \StringTok{"married$"}\NormalTok{,}
+    \StringTok{"divorced$"}\NormalTok{,}
+    \StringTok{"married:countryMexico"}\NormalTok{,}
+    \StringTok{"countryMexico:divorced"}\NormalTok{,}
+    \StringTok{"AGE$"}\NormalTok{,}
+    \StringTok{"I}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{(AGE}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{\^{}2}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{)"}\NormalTok{,}
+    \StringTok{"YRSCHOOL$"}\NormalTok{,}
+    \StringTok{"CHBORN$"}\NormalTok{,}
+    \StringTok{"countryMexico$"}
+\NormalTok{  ),}
+  \AttributeTok{omit.stat =} \FunctionTok{c}\NormalTok{(}\StringTok{"f"}\NormalTok{, }\StringTok{"ser"}\NormalTok{),}
+  \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+  \AttributeTok{type =} \StringTok{"text"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Association Between Marital Status and Employment
+## ===================================================
+##                            Dependent variable:     
+##                        ----------------------------
+##                                  Employed          
+##                          Pooled   With interactions
+##                           (1)            (2)       
+## ---------------------------------------------------
+## Married                -0.261***      -0.231***    
+##                         (0.0003)      (0.0003)     
+##                                                    
+## Divorced               -0.152***      -0.165***    
+##                         (0.001)        (0.001)     
+##                                                    
+## Married × Mexico        0.043***      0.043***     
+##                         (0.0001)      (0.0001)     
+##                                                    
+## Divorced × Mexico      -0.001***      -0.001***    
+##                        (0.00000)      (0.00000)    
+##                                                    
+## Age                     0.004***      0.004***     
+##                        (0.00001)      (0.00001)    
+##                                                    
+## Age squared            -0.0004***    -0.0005***    
+##                        (0.00001)      (0.00001)    
+##                                                    
+## Years of schooling     -0.108***      -0.042***    
+##                         (0.0003)       (0.001)     
+##                                                    
+## Children ever born                    -0.101***    
+##                                        (0.001)     
+##                                                    
+## Mexico (country dummy)                0.037***     
+##                                        (0.001)     
+##                                                    
+## ---------------------------------------------------
+## Observations           15,523,403    15,523,403    
+## R2                       0.109          0.111      
+## Adjusted R2              0.109          0.111      
+## ===================================================
+## Note:                   *p<0.1; **p<0.05; ***p<0.01
+\end{verbatim}
+
+\subsection{Employment results}\label{employment-results}
+
+Table 2 shows a large and statistically precise association between
+marital status and employment. In the pooled model, being married is
+associated with a 26.1 percentage point lower probability of being
+employed relative to never-married women, and being divorced is
+associated with a 15.2 percentage point lower probability. In the
+interaction specification, the baseline (Brazil) married coefficient is
+about -0.231, while the married interaction for Mexico is +0.043,
+implying that the employment gap between married and never-married women
+is still negative in Mexico but smaller than in Brazil by about 4.3
+percentage points. The divorced interaction for Mexico is essentially
+zero in magnitude, suggesting the divorce-employment association is
+similar across countries in this pooled model.
+
+These findings are consistent with household specialization models in
+which marriage is associated with reduced market work for women. They
+are also consistent with bargaining approaches if marriage reduces
+women's market attachment or if women's outside options differ
+systematically by marital status (McElroy and Horney; Lundberg and
+Pollak; Chiappori). That said, selection into marriage is likely
+important: women with lower labor market attachment may be more likely
+to marry, and unobserved preferences and local labor market conditions
+could bias these estimates.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# 6. Earnings Regression (Employed Women Only)}
+\NormalTok{df\_working }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(employed }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(ln\_earnings))}
+
+\NormalTok{m\_earn }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(}
+\NormalTok{  ln\_earnings }\SpecialCharTok{\textasciitilde{}}\NormalTok{ married }\SpecialCharTok{+}\NormalTok{ divorced }\SpecialCharTok{+}
+\NormalTok{    AGE }\SpecialCharTok{+} \FunctionTok{I}\NormalTok{(AGE}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ YRSCHOOL }\SpecialCharTok{+}\NormalTok{ CHBORN }\SpecialCharTok{+}
+\NormalTok{    country }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(year),}
+  \AttributeTok{data =}\NormalTok{ df\_working}
+\NormalTok{)}
+
+\FunctionTok{stargazer}\NormalTok{(}
+\NormalTok{  m\_earn,}
+  \AttributeTok{title =} \StringTok{"Association Between Marital Status and Log Earnings (Employed Women Only)"}\NormalTok{,}
+  \AttributeTok{dep.var.labels =} \StringTok{"log(earnings + 1)"}\NormalTok{,}
+  \AttributeTok{covariate.labels =} \FunctionTok{c}\NormalTok{(}
+    \StringTok{"Married"}\NormalTok{,}
+    \StringTok{"Divorced"}\NormalTok{,}
+    \StringTok{"Age"}\NormalTok{,}
+    \StringTok{"Age squared"}\NormalTok{,}
+    \StringTok{"Years of schooling"}\NormalTok{,}
+    \StringTok{"Children ever born"}\NormalTok{,}
+    \StringTok{"Mexico (country dummy)"}\NormalTok{,}
+    \StringTok{"Year dummies"}
+\NormalTok{  ),}
+  \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+  \AttributeTok{omit.stat =} \FunctionTok{c}\NormalTok{(}\StringTok{"f"}\NormalTok{, }\StringTok{"ser"}\NormalTok{),}
+  \AttributeTok{type =} \StringTok{"text"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Association Between Marital Status and Log Earnings (Employed Women Only)
+## ==================================================
+##                            Dependent variable:    
+##                        ---------------------------
+##                             log(earnings + 1)     
+## --------------------------------------------------
+## Married                         -0.592***         
+##                                  (0.002)          
+##                                                   
+## Divorced                        -0.052***         
+##                                  (0.005)          
+##                                                   
+## Age                             0.172***          
+##                                  (0.001)          
+##                                                   
+## Age squared                     -0.002***         
+##                                 (0.00001)         
+##                                                   
+## Years of schooling              0.026***          
+##                                 (0.0001)          
+##                                                   
+## Children ever born              -0.005***         
+##                                 (0.0001)          
+##                                                   
+## Mexico (country dummy)          1.416***          
+##                                  (0.003)          
+##                                                   
+## Year dummies                    -0.810***         
+##                                  (0.004)          
+##                                                   
+## factor(year)2000                -6.004***         
+##                                  (0.004)          
+##                                                   
+## Constant                        8.289***          
+##                                  (0.010)          
+##                                                   
+## --------------------------------------------------
+## Observations                    5,723,772         
+## R2                                0.609           
+## Adjusted R2                       0.609           
+## ==================================================
+## Note:                  *p<0.1; **p<0.05; ***p<0.01
+\end{verbatim}
+
+\subsection{Earnings results}\label{earnings-results}
+
+Table 3 reports results for log earnings among employed women. Married
+employed women have substantially lower earnings than never-married
+employed women: the married coefficient is about -0.592, which
+corresponds to roughly 45\% lower earnings in a log interpretation ( 𝑒 −
+0.592 − 1 ≈ − 0.447 e −0.592 −1≈−0.447). Divorced employed women also
+have lower earnings than never-married employed women, but the magnitude
+is much smaller (about -0.052, or roughly 5\%). Education is positively
+related to earnings, and the age profile is concave, consistent with a
+typical earnings lifecycle pattern.
+
+In the context of family economics, the married earnings penalty among
+employed women could reflect several mechanisms: differential selection
+into employment (for example, married women may be more likely to work
+intermittently or in lower-paying jobs compatible with household
+production), employer discrimination, or a ``motherhood penalty''
+channel correlated with marriage and fertility. Bargaining models do not
+necessarily predict higher earnings for married women; instead, they
+predict that allocations respond to outside options and institutions,
+and labor market behavior can be part of how outside options are formed
+(Lundberg and Pollak; Chiappori). Because earnings are measured in local
+currency and the pooled model includes a country dummy, cross-country
+comparisons of earnings levels are not meaningful without conversion;
+the key takeaway here is the within-sample marital status gradient.
+
+\subsection{Discussion and
+Limitations}\label{discussion-and-limitations}
+
+This paper's results strongly suggest that marital status is correlated
+with women's labor market outcomes in both Mexico and Brazil. The
+descriptive patterns show that marriage is nearly universal by midlife
+and closely linked to age, while the regression estimates show that the
+married category is associated with lower employment and lower earnings
+among workers.
+
+However, there are important limitations. First, the estimates are not
+causal: marriage and divorce are endogenously chosen and correlated with
+unobserved characteristics. Second, earnings comparisons across
+countries are complicated by different currency units and potentially
+different top-coding rules; a cleaner cross-country earnings comparison
+would convert incomes into a common metric such as PPP-adjusted dollars
+or would analyze within-country standardized earnings measures. Third,
+the census data provide limited information on job characteristics (for
+example, hours, informality, or sector) that may mediate the
+relationship between marriage and earnings. Finally, the extremely large
+sample sizes mean very small differences can be statistically
+significant, so substantive significance should be emphasized alongside
+p-values.
+
+Even with these limitations, the results line up with well-established
+ideas in the family economics literature: marriage is associated with
+changes in time allocation and labor market attachment, and these
+relationships can differ across settings depending on social norms,
+labor markets, and institutions governing family formation and
+dissolution (McElroy and Horney; Chiappori; Lundberg and Pollak).
+Research on divorce law changes also highlights that institutions can
+shape labor supply responses, though identifying those effects requires
+policy variation and careful causal designs (Hoehn-Velasco and Penglase;
+Stevenson and Wolfers).
+
+\subsection{Conclusion}\label{conclusion}
+
+Using IPUMS International census microdata for Brazil and Mexico around
+1990/1991 and 2000, I find that marital status is strongly associated
+with women's employment and earnings. Married women are much less likely
+to be employed than never-married women, and among employed women,
+marriage is associated with substantially lower earnings. A pooled
+interaction model suggests the marriage-employment gap is somewhat
+smaller in Mexico than in Brazil, while the divorced-employment
+relationship is similar across the two countries in this specification.
+Overall, the patterns are consistent with family economics theories
+emphasizing specialization and bargaining, while also highlighting the
+importance of selection and institutional context. Future work could
+improve cross-country earnings comparability and move toward causal
+identification using policy variation in family law.
+
+\newpage
+
+Works Cited
+
+Chiappori, Pierre-André. ``Collective Labor Supply and Welfare.''
+Journal of Political Economy, vol.~100, no. 3, 1992, pp.~437--467.
+University of Chicago Press, \url{https://doi.org/10.1086/261825}
+
+Hoehn-Velasco, Lauren, and Jacob Penglase. ``Does Unilateral Divorce
+Impact Women's Labor Supply? Evidence from Mexico.'' Journal of Economic
+Behavior \& Organization, vol.~187, 2021, pp.~315--347. Elsevier,
+\url{https://doi.org/10.1016/j.jebo.2021.04.028}
+
+IPUMS International. IPUMS International: Version 7.7 {[}dataset{]}.
+Minneapolis, MN: IPUMS, 2025. \url{https://doi.org/10.18128/D020.V7.7}
+
+Lundberg, Shelly, and Robert A. Pollak. ``Separate Spheres Bargaining
+and the Marriage Market.'' American Economic Review, vol.~83, no. 4,
+1993, pp.~988--1010.
+
+McElroy, Marjorie B., and Mary Jean Horney. ``Nash-Bargained Household
+Decisions: Toward a Generalization of the Theory of Demand.''
+International Economic Review, vol.~22, no. 2, 1981, pp.~333--349.
+
+Stevenson, Betsey, and Justin Wolfers. ``Bargaining in the Shadow of the
+Law: Divorce Laws and Family Distress.'' Quarterly Journal of Economics,
+vol.~121, no. 1, 2006, pp.~267--288.
+
+\end{document}
